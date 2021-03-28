@@ -1,3 +1,5 @@
 .env
+vacancies.txt.sample
 .idea/
 __pycache__/
+*.pkl

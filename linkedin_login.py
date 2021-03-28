@@ -2,12 +2,14 @@ import settings
 import time
 
 
-class LogIn:
+class LinkedinLogin:
+    LINKEDIN_URL = 'https://www.linkedin.com'
+
     def __init__(self, driver):
         self.driver = driver
 
     def login(self):
-        self.driver.get('https://www.linkedin.com')
+        self.driver.get(self.LINKEDIN_URL)
 
         email_field = self.driver.find_element_by_id('session_key')
         email_field.send_keys(settings.LINKEDIN_EMAIL)

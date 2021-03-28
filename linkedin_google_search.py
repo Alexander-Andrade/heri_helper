@@ -10,7 +10,7 @@ class LinkedinGoogleSearch:
     def __init__(self, driver, query, pages):
         self.query = query
         self.driver = driver
-        self.pages = sorted(pages)
+        self.pages = sorted(map(int, pages))
 
     def search(self):
         self.driver.get(self.GOOGLE_URL)
@@ -19,6 +19,7 @@ class LinkedinGoogleSearch:
         search_query.send_keys(Keys.RETURN)
 
         linkedin_urls = []
+
         for page in self.pages:
             navigation_result = self.go_to_page(page)
             if navigation_result.is_failure():
@@ -28,6 +29,8 @@ class LinkedinGoogleSearch:
         return Result.success(linkedin_urls)
 
     def go_to_page(self, page):
+        if page == 1:
+            return Result.success()
         previous_last_visible_page = None
         while True:
             try:
@@ -40,7 +43,7 @@ class LinkedinGoogleSearch:
             last_visible_page = self.click_last_visible_page()
             if previous_last_visible_page and last_visible_page <= previous_last_visible_page:
                 return Result.failure(f"Searchable page is out of range, last page:"
-                                      f" {previous_last_visible_page}, searchable page: #{page}")
+                                      f" {previous_last_visible_page}, searchable page: {page}")
             previous_last_visible_page = last_visible_page
             if settings.MAX_PAGE <= last_visible_page:
                 return Result.failure(f"MAX_PAGE reached")

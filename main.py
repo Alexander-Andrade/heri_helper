@@ -1,9 +1,13 @@
-from selenium import webdriver
-from login import LogIn
+from linkedin_login import LinkedinLogin
+from cleverstaff_login import CleverstaffLogin
 from linkedin_google_search import LinkedinGoogleSearch
 import settings
 from cli_args_validator import CliArgsValidator
 from cli_args_parser import CliArgsParser
+from driver_builder import DriverBuilder
+from proxy_setter import ProxySetter
+from linkedin_search_query_builder import LinkedinSearchQueryBuilder
+from add_candidate_to_database import AddCandidateToDatabase
 
 
 if __name__ == '__main__':
@@ -14,20 +18,18 @@ if __name__ == '__main__':
         print(validation_result.error)
         exit()
 
-    driver = webdriver.Chrome(settings.CHROME_DRIVER_PATH)
-    LogIn(driver).login()
+    driver = DriverBuilder.build()
 
-    if args.proxy:
-        webdriver.DesiredCapabilities.CHROME['proxy'] = {
-            "httpProxy": args.proxy,
-            "ftpProxy": args.proxy,
-            "sslProxy": args.proxy,
-            "proxyType": "MANUAL",
+    print(f'LinkedIn login with {settings.LINKEDIN_EMAIL}/'
+          f'{settings.LINKEDIN_PASSWORD} ...')
 
-        }
+    LinkedinLogin(driver=driver).login()
 
-    print(f'\nSearching candidates...')
-    search_query = f"site:linkedin.com/in/ AND {args.query}"
+    proxy_result = ProxySetter.set(args.proxy)
+    print(proxy_result.data)
+
+    search_query = LinkedinSearchQueryBuilder(args.query).build()
+    print(f'\nSearching candidates with query: {search_query} ...')
     search_result = LinkedinGoogleSearch(
         driver=driver,
         query=search_query,
@@ -36,6 +38,7 @@ if __name__ == '__main__':
 
     if search_result.is_failure():
         print(search_result.error)
+        driver.quit()
         exit()
 
     linkedin_urls = search_result.data
@@ -43,4 +46,27 @@ if __name__ == '__main__':
     for url in linkedin_urls:
         print(url)
 
-    print(f'\nAdding candidates to the database...')
+    print(f'\nCleverStaff login with {settings.ATS_EMAIL}/'
+          f'{settings.ATS_PASSWORD} ...')
+
+    CleverstaffLogin(
+        driver=driver,
+        load_cookies=args.load_cookies,
+        store_cookies=args.store_cookies
+    ).login()
+
+    print(f"\nAdding candidates to vacancy '{args.vacancy}' ...")
+
+    for candidate_url in linkedin_urls:
+        db_save_result = AddCandidateToDatabase(
+            driver=driver,
+            candidate_url=candidate_url,
+            vacancy=args.vacancy
+        ).add()
+        if db_save_result.is_failure():
+            print(db_save_result.error)
+            driver.quit()
+            exit()
+
+    print(f"\nDone")
+    driver.quit()
