@@ -8,6 +8,7 @@ from driver_builder import DriverBuilder
 from proxy_setter import ProxySetter
 from linkedin_search_query_builder import LinkedinSearchQueryBuilder
 from add_candidate_to_database import AddCandidateToDatabase
+import time
 
 
 if __name__ == '__main__':
@@ -57,6 +58,13 @@ if __name__ == '__main__':
 
     print(f"\nAdding candidates to vacancy '{args.vacancy}' ...")
 
+    time.sleep(3)
+    driver.get(linkedin_urls[0])
+    input("Enable browser extension by"
+          "\n1. pressing extension button"
+          "\n2. page reloading"
+          "\n3. Press Enter to continue...")
+
     for candidate_url in linkedin_urls:
         db_save_result = AddCandidateToDatabase(
             driver=driver,
@@ -65,8 +73,10 @@ if __name__ == '__main__':
         ).add()
         if db_save_result.is_failure():
             print(db_save_result.error)
+            time.sleep(10)
             driver.quit()
             exit()
+        print(db_save_result.data)
 
     print(f"\nDone")
     driver.quit()

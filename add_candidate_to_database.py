@@ -1,4 +1,3 @@
-from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
 from result import Result
 import time
@@ -11,41 +10,89 @@ class AddCandidateToDatabase:
         self.candidate_url = candidate_url
 
     def add(self):
-        time.sleep(3)
+        time.sleep(1)
         self.driver.get(self.candidate_url)
-        time.sleep(0.5)
+        time.sleep(3)
 
-        try:
-            self.driver.find_element_by_css_selector(
-                'a.save-button.sign-in-to-ats.LinkedinResume'
-            )
+        signedin_to_ats = self.check_signed_in_to_ats()
+        if not signedin_to_ats:
             return Result.failure('Sign in to ATS first')
-        except NoSuchElementException:
-            pass
 
-        try:
-            save_to_ats_button = self.driver. \
-                find_element_by_css_selector('a.save-button.user-auth.LinkedinResume')
-            save_to_ats_button.click()
-            time.sleep(10)
-        except NoSuchElementException:
-            return Result.failure(
-                f'Save to ATS button was not present for {self.candidate_url}'
-            )
+        profile_in_ats = self.check_profile_in_ats()
+        if profile_in_ats:
+            return Result.success(f'Profile in ATS {self.candidate_url}')
 
+        save_to_ats_pressed = self.press_save_to_ats_button()
+        if not save_to_ats_pressed:
+            return Result.failure(f'Save to ATS button was'
+                                  f' not present for {self.candidate_url}')
+
+        self.try_save_to_new_vacancy()
+
+        vacancy_selected = self.select_vacancy()
+        if not vacancy_selected:
+            Result.failure(f'Can not find \'{self.vacancy}\' in ATS options')
+
+        self.press_add_to_vacancy_in_ats()
+
+        return Result.success(f'{self.candidate_url} added to ATS database')
+
+    def press_add_to_vacancy_in_ats(self):
+        add_to_vacancy_in_ats_button = self.driver.\
+            find_element_by_xpath("//button[contains(text(), 'Add to vacancy in ATS')]")
+        add_to_vacancy_in_ats_button.click()
+
+    def select_vacancy(self):
         dropdown_input = self.driver.find_element_by_css_selector('input.vacancy-dropdown__input')
         dropdown_input.click()
 
-        vacancy_option_result = self.find_vacancy_option()
-        if vacancy_option_result.is_failure():
-            return vacancy_option_result
+        vacancy_option = self.find_vacancy_option()
+        if not vacancy_option:
+            return False
+        vacancy_option.click()
+        return True
 
-        vacancy_option_result.data.click()
-        save_to_ats_button = self.driver.\
-            find_element_by_xpath("//button[contains(text(), 'ATS')]")
-        save_to_ats_button.click()
+    def try_save_to_new_vacancy(self):
+        try:
+            save_to_ats_button = self.driver.\
+                find_element_by_xpath("//button[contains(text(), 'Save to our ATS')]")
+            save_to_ats_button.click()
+            time.sleep(2)
+            return True
+        except NoSuchElementException:
+            return False
 
-        return Result.success(f'{self.candidate_url} added to ATS database')
+    def check_profile_in_ats(self):
+        profile_in_ats_link = self.driver. \
+            find_elements_by_css_selector(
+                'a.save-button.user-auth.profile-in-ats.LinkedinResume'
+            )
+        return True if profile_in_ats_link else False
+
+    def check_signed_in_to_ats(self):
+        signin_ats_button = self.driver.find_elements_by_css_selector(
+                'a.save-button.sign-in-to-ats.LinkedinResume'
+            )
+        return False if signin_ats_button else True
+
+    def press_save_to_ats_button(self):
+        for i in range(2):
+            try:
+                save_to_ats_button = self.driver. \
+                    find_element_by_css_selector(
+                        'a.save-button.user-auth.LinkedinResume'
+                    )
+                save_to_ats_button.click()
+                time.sleep(15)
+                return True
+            except NoSuchElementException:
+                if i == 0:
+                    input("Enable browser extension by"
+                          "\n1. pressing extension button"
+                          "\n2. page reloading"
+                          "\n3. Press Enter to continue...")
+                else:
+                    return False
 
     def find_vacancy_option(self):
         vacancies_options = self.driver.find_elements_by_css_selector(
@@ -54,5 +101,5 @@ class AddCandidateToDatabase:
         lower_vacancy = self.vacancy.lower()
         for option in vacancies_options:
             if lower_vacancy in option.text.lower():
-                return Result.success(option)
-        return Result.failure(f'Can not find \'{self.vacancy}\' in ATS options')
+                return option
+        return None
