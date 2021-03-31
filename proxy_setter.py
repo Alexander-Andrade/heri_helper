@@ -13,5 +13,5 @@ class ProxySetter:
                 "proxyType": "MANUAL",
 
             }
-            return Result.success(f'Proxy {proxy} ...')
-        return Result.success('No proxy')
+            return True
+        return False

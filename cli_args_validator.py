@@ -32,6 +32,8 @@ class CliArgsValidator:
         return Result.success()
 
     def validate_proxy(self):
+        if not self.args.proxy:
+            return Result.success()
         try:
             host, port = self.args.proxy.split(':')
         except ValueError:

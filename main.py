@@ -26,8 +26,11 @@ if __name__ == '__main__':
 
     LinkedinLogin(driver=driver).login()
 
-    proxy_result = ProxySetter.set(args.proxy)
-    print(proxy_result.data)
+    proxy_set = ProxySetter.set(args.proxy)
+    if proxy_set:
+        print(f'Proxy {args.proxy} ...')
+    else:
+        print('No proxy')
 
     search_query = LinkedinSearchQueryBuilder(args.query).build()
     print(f'\nSearching candidates with query: {search_query} ...')

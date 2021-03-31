@@ -83,7 +83,7 @@ class AddCandidateToDatabase:
                         'a.save-button.user-auth.LinkedinResume'
                     )
                 save_to_ats_button.click()
-                time.sleep(15)
+                time.sleep(17)
                 return True
             except NoSuchElementException:
                 if i == 0:
