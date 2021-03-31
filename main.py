@@ -50,11 +50,7 @@ if __name__ == '__main__':
     print(f'\nCleverStaff login with {settings.ATS_EMAIL}/'
           f'{settings.ATS_PASSWORD} ...')
 
-    CleverstaffLogin(
-        driver=driver,
-        load_cookies=args.load_cookies,
-        store_cookies=args.store_cookies
-    ).login()
+    CleverstaffLogin(driver=driver).login()
 
     print(f"\nAdding candidates to vacancy '{args.vacancy}' ...")
 

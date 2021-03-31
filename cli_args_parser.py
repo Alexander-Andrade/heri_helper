@@ -16,8 +16,6 @@ class CliArgsParser:
         self.add_pages_argument()
         self.add_proxy_argument()
         self.add_vacancy_argument()
-        self.add_store_cookie_argument()
-        self.add_load_cookie_argument()
 
         return self.parser.parse_args()
 
@@ -52,23 +50,3 @@ class CliArgsParser:
             type=str,
             help="'Senior Full Stack Developer (Platform)'"
         )
-
-    def add_store_cookie_argument(self):
-        self.parser.add_argument(
-            '-s',
-            '--store_cookies',
-            dest='store_cookies',
-            action='store_true',
-            help="store cookies from the session"
-        )
-        self.parser.set_defaults(store_cookies=False)
-
-    def add_load_cookie_argument(self):
-        self.parser.add_argument(
-            '-l',
-            '--load_cookies',
-            dest='load_cookies',
-            action='store_true',
-            help="load cookies from the session"
-        )
-        self.parser.set_defaults(load_cookies=False)
