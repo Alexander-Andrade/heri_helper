@@ -1,5 +1,6 @@
 from selenium.common.exceptions import NoSuchElementException
 from result import Result
+from urllib.parse import unquote
 import time
 
 
@@ -20,12 +21,12 @@ class AddCandidateToDatabase:
 
         profile_in_ats = self.check_profile_in_ats()
         if profile_in_ats:
-            return Result.success(f'Profile in ATS {self.candidate_url}')
+            return Result.success(f'Profile in ATS {unquote(self.candidate_url)}')
 
         save_to_ats_pressed = self.press_save_to_ats_button()
         if not save_to_ats_pressed:
             return Result.failure(f'Save to ATS button was'
-                                  f' not present for {self.candidate_url}')
+                                  f' not present for {unquote(self.candidate_url)}')
 
         self.try_save_to_new_vacancy()
 
@@ -35,7 +36,7 @@ class AddCandidateToDatabase:
 
         self.press_add_to_vacancy_in_ats()
 
-        return Result.success(f'{self.candidate_url} added to ATS database')
+        return Result.success(f'{unquote(self.candidate_url)} added to ATS database')
 
     def press_add_to_vacancy_in_ats(self):
         add_to_vacancy_in_ats_button = self.driver.\

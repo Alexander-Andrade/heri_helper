@@ -8,6 +8,7 @@ from driver_builder import DriverBuilder
 from proxy_setter import ProxySetter
 from linkedin_search_query_builder import LinkedinSearchQueryBuilder
 from add_candidate_to_database import AddCandidateToDatabase
+from urllib.parse import unquote
 import time
 
 
@@ -48,7 +49,7 @@ if __name__ == '__main__':
     linkedin_urls = search_result.data
     print(f'\nNext candidates was found on pages {args.pages}\n')
     for url in linkedin_urls:
-        print(url)
+        print(unquote(url))
 
     print(f'\nCleverStaff login with {settings.ATS_EMAIL}/'
           f'{settings.ATS_PASSWORD} ...')

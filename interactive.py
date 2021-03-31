@@ -9,6 +9,7 @@ from linkedin_search_query_builder import LinkedinSearchQueryBuilder
 from linkedin_google_search import LinkedinGoogleSearch
 from add_candidate_to_database import AddCandidateToDatabase
 from random import sample
+from urllib.parse import unquote
 import time
 
 REST = [
@@ -70,7 +71,7 @@ if __name__ == '__main__':
         linkedin_urls = search_result.data
         print(f'\nNext candidates was found on pages {args.pages}\n')
         for url in linkedin_urls:
-            print(url)
+            print(unquote(url))
 
         print(f"\nAdding candidates to vacancy '{args.vacancy}' ...")
 
