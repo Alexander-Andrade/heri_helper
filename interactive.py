@@ -31,6 +31,9 @@ if __name__ == '__main__':
     print(f'\nCleverStaff login with {settings.ATS_EMAIL}/'
           f'{settings.ATS_PASSWORD} ...')
     CleverstaffLogin(driver=driver).login()
+
+    time.sleep(3)
+    driver.get('https://by.linkedin.com/in/nikita-efremov-6820a2130')
     input("Enable browser extension by"
           "\n1. pressing extension button"
           "\n2. page reloading"
