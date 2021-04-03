@@ -94,5 +94,5 @@ if __name__ == '__main__':
         if stop == 'y':
             break
 
-        print(f"\nLeaving")
-        driver.quit()
+    print(f"\nLeaving")
+    driver.quit()
