@@ -1,13 +1,13 @@
-from linkedin_login import LinkedinLogin
-from cleverstaff_login import CleverstaffLogin
-from linkedin_google_search import LinkedinGoogleSearch
+from src.linkedin import LinkedinLogin
+from src.cleverstaff.cleverstaff_login import CleverstaffLogin
+from src.google.linkedin_google_search import LinkedinGoogleSearch
 import settings
-from cli_args_validator import CliArgsValidator
-from cli_args_parser import CliArgsParser
-from driver_builder import DriverBuilder
-from proxy_setter import ProxySetter
-from linkedin_search_query_builder import LinkedinSearchQueryBuilder
-from add_candidate_to_database import AddCandidateToDatabase
+from src.cli import CliArgsValidator
+from src.cli.cli_args_parser import CliArgsParser
+from src.webdriver import DriverBuilder
+from src.webdriver import ProxySetter
+from src.google.linkedin_search_query_builder import LinkedinSearchQueryBuilder
+from src.add_candidate_to_database import AddCandidateToDatabase
 from urllib.parse import unquote
 import time
 

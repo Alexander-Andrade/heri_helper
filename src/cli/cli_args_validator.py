@@ -1,4 +1,4 @@
-from result import Result
+from src.result import Result
 import validators
 import settings
 
@@ -16,6 +16,10 @@ class CliArgsValidator:
             return result
 
         result = self.validate_proxy()
+        if result.is_failure():
+            return result
+
+        result = self.validate_engine()
         if result.is_failure():
             return result
 
@@ -42,5 +46,15 @@ class CliArgsValidator:
         if self.args.proxy and not validators.ipv4(host):
             return Result.failure('Heri, provide please proxy like'
                                   ' "142.250.75.14:80" or use --help ;)')
+
+        return Result.success()
+
+    def validate_engine(self):
+        if not self.args.engine:
+            return Result.success()
+
+        if self.args.engine not in ['g', 'l']:
+            return Result.failure('Heri, provide please engine '
+                                  'like "g" (Google) or "l" (Linkedin)')
 
         return Result.success()

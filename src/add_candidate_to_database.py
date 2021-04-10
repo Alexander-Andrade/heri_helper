@@ -1,7 +1,7 @@
 from selenium.common.exceptions import NoSuchElementException
-from result import Result
+from src.result import Result
 from urllib.parse import unquote
-from retry_decorator import retry_if_exceptions
+from src.retry_decorator import retry_if_exception
 import time
 
 
@@ -39,13 +39,13 @@ class AddCandidateToDatabase:
 
         return Result.success(f'{unquote(self.candidate_url)} added to ATS database')
 
-    @retry_if_exceptions(NoSuchElementException)
+    @retry_if_exception(NoSuchElementException)
     def press_add_to_vacancy_in_ats(self):
         add_to_vacancy_in_ats_button = self.driver.\
             find_element_by_xpath("//button[contains(text(), 'Add to vacancy in ATS')]")
         add_to_vacancy_in_ats_button.click()
 
-    @retry_if_exceptions(NoSuchElementException)
+    @retry_if_exception(NoSuchElementException)
     def select_vacancy(self):
         dropdown_input = self.driver.find_element_by_css_selector('input.vacancy-dropdown__input')
         dropdown_input.click()
@@ -79,7 +79,7 @@ class AddCandidateToDatabase:
             )
         return False if signin_ats_button else True
 
-    @retry_if_exceptions(NoSuchElementException)
+    @retry_if_exception(NoSuchElementException)
     def press_save_to_ats_button(self):
         save_to_ats_button = self.driver. \
             find_element_by_css_selector(
@@ -89,7 +89,7 @@ class AddCandidateToDatabase:
         time.sleep(15)
         return True
 
-    @retry_if_exceptions(NoSuchElementException)
+    @retry_if_exception(NoSuchElementException)
     def find_vacancy_option(self):
         vacancies_options = self.driver.find_elements_by_css_selector(
             "span.vacancy-dropdown__autocomplete-option-text"

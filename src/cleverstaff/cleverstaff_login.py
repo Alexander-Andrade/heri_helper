@@ -2,13 +2,11 @@ import settings
 
 
 class CleverstaffLogin:
-    CLEVERSTAFF_URL = 'https://cleverstaff.net/ru/signin.html'
-
     def __init__(self, driver):
         self.driver = driver
 
     def login(self):
-        self.driver.get(self.CLEVERSTAFF_URL)
+        self.driver.get(settings.CLEVERSTAFF_URL)
 
         email_field = self.driver.find_element_by_id('user-email')
         email_field.send_keys(settings.ATS_EMAIL)

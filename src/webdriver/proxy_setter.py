@@ -1,5 +1,4 @@
 from selenium import webdriver
-from result import Result
 
 
 class ProxySetter:

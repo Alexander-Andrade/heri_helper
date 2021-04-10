@@ -1,13 +1,14 @@
-from args import Args
-from driver_builder import DriverBuilder
+from src.cli import Args
+from src.webdriver import DriverBuilder
 import settings
-from linkedin_login import LinkedinLogin
-from proxy_setter import ProxySetter
-from cli_args_validator import CliArgsValidator
-from cleverstaff_login import CleverstaffLogin
-from linkedin_search_query_builder import LinkedinSearchQueryBuilder
-from linkedin_google_search import LinkedinGoogleSearch
-from add_candidate_to_database import AddCandidateToDatabase
+from src.linkedin import LinkedinLogin
+from src.webdriver import ProxySetter
+from src.cli import CliArgsValidator
+from src.cleverstaff.cleverstaff_login import CleverstaffLogin
+from src.google.linkedin_search_query_builder import LinkedinSearchQueryBuilder
+from src.google.linkedin_google_search import LinkedinGoogleSearch
+from src.add_candidate_to_database import AddCandidateToDatabase
+from src.linkedin.linkedin_search import LinkedinSearch
 from random import sample
 from urllib.parse import unquote
 import time
@@ -33,7 +34,7 @@ if __name__ == '__main__':
     CleverstaffLogin(driver=driver).login()
 
     time.sleep(3)
-    driver.get('https://by.linkedin.com/in/nikita-efremov-6820a2130')
+    driver.get(settings.LINKEDIN_URL)
     input("Enable browser extension by"
           "\n1. pressing extension button"
           "\n2. page reloading"
@@ -45,8 +46,8 @@ if __name__ == '__main__':
         proxy = input('Enter proxy eg. 192.0.2.146:80'
                       ' to skip press Enter ;)\n')
         vacancy = input('Enter vacancy eg. Senior Full Stack Developer (Platform)\n')
-
-        args = Args(query=query, pages=pages, proxy=proxy, vacancy=vacancy)
+        engine = input('Enter engine eg. Google or Linkedin (g/l) ?\n')
+        args = Args(query=query, pages=pages, proxy=proxy, vacancy=vacancy, engine=engine)
 
         validation_result = CliArgsValidator(args).validate()
         if validation_result.is_failure():
@@ -59,13 +60,20 @@ if __name__ == '__main__':
         else:
             print('No proxy')
 
-        search_query = LinkedinSearchQueryBuilder(args.query).build()
-        print(f'\nSearching candidates with query: {search_query} ...')
-        search_result = LinkedinGoogleSearch(
-            driver=driver,
-            query=search_query,
-            pages=args.pages.split(',')
-        ).search()
+        if args.engine == 'g':
+            search_query = LinkedinSearchQueryBuilder(args.query).build()
+            print(f'\nSearching candidates with query: {search_query} ...')
+            search_result = LinkedinGoogleSearch(
+                driver=driver,
+                query=search_query,
+                pages=args.pages.split(',')
+            ).search()
+        else:
+            search_result = LinkedinSearch(
+                driver=driver,
+                query=args.query,
+                pages=args.pages.split(',')
+            ).search()
 
         if search_result.is_failure():
             print(search_result.error)

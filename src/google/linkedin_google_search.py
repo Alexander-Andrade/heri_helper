@@ -1,22 +1,18 @@
 from selenium.webdriver.common.keys import Keys
 import selenium
 import settings
-from result import Result
+from src.result import Result
 
 
 class LinkedinGoogleSearch:
-    GOOGLE_URL = 'https://www.google.com'
-
     def __init__(self, driver, query, pages):
         self.query = query
         self.driver = driver
         self.pages = sorted(map(int, pages))
 
     def search(self):
-        self.driver.get(self.GOOGLE_URL)
-        search_query = self.driver.find_element_by_name('q')
-        search_query.send_keys(self.query)
-        search_query.send_keys(Keys.RETURN)
+        self.driver.get(settings.GOOGLE_URL)
+        self.enter_query()
 
         linkedin_urls = []
 
@@ -27,6 +23,11 @@ class LinkedinGoogleSearch:
 
             linkedin_urls = linkedin_urls + self.find_linkedin_urls()
         return Result.success(linkedin_urls)
+
+    def enter_query(self):
+        search_query = self.driver.find_element_by_name('q')
+        search_query.send_keys(self.query)
+        search_query.send_keys(Keys.RETURN)
 
     def go_to_page(self, page):
         if page == 1:

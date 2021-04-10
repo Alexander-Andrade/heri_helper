@@ -13,3 +13,7 @@ LINKEDIN_PASSWORD = env.str('LINKEDIN_PASSWORD')
 ATS_EMAIL = env.str('ATS_EMAIL')
 ATS_PASSWORD = env.str('ATS_PASSWORD')
 MAX_PAGE = env.int('MAX_PAGE')
+
+LINKEDIN_URL = 'https://www.linkedin.com'
+GOOGLE_URL = 'https://www.google.com'
+CLEVERSTAFF_URL = 'https://cleverstaff.net/ru/signin.html'
