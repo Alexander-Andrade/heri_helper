@@ -16,4 +16,4 @@ MAX_PAGE = env.int('MAX_PAGE')
 
 LINKEDIN_URL = 'https://www.linkedin.com'
 GOOGLE_URL = 'https://www.google.com'
-CLEVERSTAFF_URL = 'https://cleverstaff.net/ru/signin.html'
+CLEVERSTAFF_URL = 'https://cleverstaff.net/signin.html'

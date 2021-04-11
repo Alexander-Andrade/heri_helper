@@ -2,7 +2,7 @@ from selenium.webdriver.common.keys import Keys
 import selenium
 import settings
 from src.result import Result
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException
 import time
 from .linkedin_paginator import LinkedinPaginator
 from ..retry_decorator import retry_if_return_value, retry_if_exception
@@ -34,7 +34,7 @@ class LinkedinSearch:
             open_query_button = self.driver. \
                 find_element_by_css_selector('button.search-global-typeahead__collapsed-search-button')
             open_query_button.click()
-        except NoSuchElementException:
+        except (ElementNotInteractableException, NoSuchElementException):
             pass
         time.sleep(1)
         search_query = self.driver. \
